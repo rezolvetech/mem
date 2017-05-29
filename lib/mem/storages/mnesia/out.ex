@@ -11,6 +11,12 @@ defmodule Mem.Storages.Mnesia.Out do
         Logger.debug ">>> OUT Create table for: #{inspect nodes} - ret: #{inspect ret}"
         ret = :mnesia.create_table(@index, [type: :ordered_set, disc_copies: nodes])
         Logger.debug ">>> OUT Create table for: #{inspect nodes} - ret: #{inspect ret}"
+        Enum.each(nodes, fn n ->
+          ret_add = :mnesia.add_table_copy(@data, n, :disc_copies)
+          Logger.debug ">>> OUT Add data table copy to node: #{inspect n} - ret: #{inspect ret_add}"
+          ret_add = :mnesia.add_table_copy(@index, n, :disc_copies)
+          Logger.debug ">>> OUT Add index table copy to node: #{inspect n} - ret: #{inspect ret_add}"
+        end)
       end
 
       def memory_used do

@@ -8,6 +8,10 @@ defmodule Mem.Storages.Mnesia.Data do
         require Logger
         ret = :mnesia.create_table(@name, [type: :set, disc_copies: nodes])
         Logger.debug ">>> DATA Create table for: #{inspect nodes} - ret: #{inspect ret}"
+        Enum.each(nodes, fn n ->
+          ret_add = :mnesia.add_table_copy(@name, n, :disc_copies)
+          Logger.debug ">>> DATA Add table copy to node: #{inspect n} - ret: #{inspect ret_add}"
+        end)
       end
 
       def memory_used do

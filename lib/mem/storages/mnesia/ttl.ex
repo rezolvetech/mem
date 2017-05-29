@@ -12,6 +12,10 @@ defmodule Mem.Storages.Mnesia.TTL do
         # :mnesia.change_table_copy_type(:schema, node(), :disc_copies)
         ret = :mnesia.create_table(@name, [type: :set, disc_copies: nodes])
         Logger.debug ">>> TTL Create table for: #{inspect nodes} - ret: #{inspect ret}"
+        Enum.each(nodes, fn n ->
+          ret_add = :mnesia.add_table_copy(@name, n, :disc_copies)
+          Logger.debug ">>> TTL Add table copy to node: #{inspect n} - ret: #{inspect ret_add}"
+        end)
       end
 
       def memory_used do
